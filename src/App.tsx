@@ -1,3 +1,4 @@
+import 'src/assets/styles/main.css';
 import { ReactElement } from 'react';
 
 const App = (): ReactElement => {
