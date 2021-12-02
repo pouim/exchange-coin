@@ -14,5 +14,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
     );
 };
+
+/**
+ * @function getLayout
+ * @param { ReactNode } children
+ * @returns { ReactElement }
+ */
 export const getLayout = (children: ReactNode): ReactElement => <Layout>{children}</Layout>;
 export default Layout;
