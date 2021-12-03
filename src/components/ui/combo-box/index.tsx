@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useEffect, useState } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import styles from './style.module.css';
 import cn from 'classnames';
 import LoadingSpin from '../loading';
@@ -29,7 +29,6 @@ const ComboBox: FC<ComboBoxProps> = ({
     labelClassName,
     isLoading,
     onSelectedItem,
-    register,
     error,
     renderItem,
     color,
@@ -42,7 +41,6 @@ const ComboBox: FC<ComboBoxProps> = ({
         <div className={`relative ${wrapperClassName}`} onClick={() => setOpen(!open)}>
             <input
                 disabled={isLoading || !data?.length}
-                ref={register}
                 autoComplete="off"
                 id={otherProps.name}
                 className={cn(

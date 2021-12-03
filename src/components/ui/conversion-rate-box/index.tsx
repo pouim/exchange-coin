@@ -16,7 +16,7 @@ const ConversionRateBox: FC<ConversionRateBoxProps> = (props): ReactElement => {
             data-test="rate-box-container"
         >
             {' '}
-            {fromCoin?.sign} 1 = {toCoin.sign} {conversionRate}
+            {fromCoin?.sign} 1 = {toCoin?.sign} {conversionRate}
         </div>
     );
 };

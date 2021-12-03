@@ -1,4 +1,4 @@
-import React, { DetailedHTMLProps, FC, ReactNode } from 'react';
+import React, { DetailedHTMLProps, FC } from 'react';
 import LoadingSpin from '../loading';
 
 export interface ButtonProps

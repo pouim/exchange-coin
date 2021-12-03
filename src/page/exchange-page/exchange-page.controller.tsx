@@ -17,15 +17,17 @@ const ExchangePageController = memo(() => {
         error: null,
     } as InputValueData;
 
+    const defaultConversionRate = 1.1877;
+
     const [wallet, setWallet] = useState<Wallet[]>(userWallet);
     const [fromCoin, setFromCoin] = useState<Wallet>(wallet[0]);
     const [toCoin, setToCoin] = useState<Wallet>(wallet[1]);
     const [fromValueData, setFromValueData] = useState<InputValueData>(initialValueData);
     const [toValueData, setToValueData] = useState<InputValueData>(initialValueData);
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
-    const [conversionRate, setConversionRate] = useState<number>(1.1877);
+    const [conversionRate, setConversionRate] = useState<number>(defaultConversionRate);
 
-    const { mutate: getRate, data, isLoading } = useMutation(gate.getConversionRate);
+    const { mutate: getRate, isLoading } = useMutation(gate.getConversionRate);
 
     /**
      * to fetch conversion rate
@@ -38,8 +40,14 @@ const ExchangePageController = memo(() => {
             onSuccess: (data: any) => {
                 setConversionRate(Object.values(data.rates)[0] as number);
             },
-            onError: (error: any) => {
-                setConversionRate(1.1877);
+            onError: (error: unknown) => {
+                //FIXME: it's just for this demo
+                // set default conversion rate value when
+                // some error happens while fetching data
+                // from our free endpoint provider
+                // in this demo
+                setConversionRate(defaultConversionRate);
+                console.log('error happened while getting conversion rate data: ', error);
             },
         });
     };
@@ -183,6 +191,9 @@ const ExchangePageController = memo(() => {
         onCloseConfirmModal();
     };
 
+    /**
+     * to fetch new conversion rate
+     */
     useEffect(() => {
         handleGetConversionRate();
     }, [fromCoin, toCoin]);
