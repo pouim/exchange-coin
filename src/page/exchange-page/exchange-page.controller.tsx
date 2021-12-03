@@ -1,6 +1,9 @@
-import { ChangeEvent, memo, useState } from 'react';
+import { ChangeEvent, memo, useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
 import Button from 'src/components/ui/button';
 import Modal from 'src/components/ui/modal';
+import gate from 'src/gate';
+import { access_key } from 'src/gate/api';
 import { isEmpty } from 'src/helper';
 import { userWallet } from 'src/helper/mock';
 import { InputValueData, Wallet } from 'src/interfaces';
@@ -21,6 +24,25 @@ const ExchangePageController = memo(() => {
     const [toValueData, setToValueData] = useState<InputValueData>(initialValueData);
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
     const [conversationRate, setConversationRate] = useState<number>(1.1877);
+
+    const { mutate: getRate, data, isLoading } = useMutation(gate.getConversionRate);
+
+    /**
+     * to fetch conversion rate
+     * @function handleGetConversionRate
+     * @returns { void }
+     */
+    const handleGetConversionRate = (): void => {
+        const query = `latest?access_key=${access_key}&base=${fromCoin.id}&symbols=${toCoin.id}`;
+        getRate(query, {
+            onSuccess: (data: any) => {
+                setConversationRate(Object.values(data.rates)[0] as number);
+            },
+            onError: (error: any) => {
+                setConversationRate(1.1877);
+            },
+        });
+    };
 
     /**
      * @function onChangeFromCoin
@@ -161,6 +183,10 @@ const ExchangePageController = memo(() => {
         onCloseConfirmModal();
     };
 
+    useEffect(() => {
+        handleGetConversionRate();
+    }, [fromCoin, toCoin]);
+
     return (
         <>
             <Modal onClose={onCloseConfirmModal} visible={showConfirmModal}>
@@ -199,6 +225,7 @@ const ExchangePageController = memo(() => {
                 onToValueChange={onToValueChange}
                 handleExchange={handleExchange}
                 conversationRate={conversationRate}
+                isLoading={isLoading}
             />
         </>
     );

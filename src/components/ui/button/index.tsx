@@ -13,7 +13,7 @@ const Button: FC<ButtonProps> = ({ children, classBtn, loading, ...otherProps })
             className={`bg-gradient-to-r whitespace-nowrap from-main-green to-main-green-500 hover:opacity-90 focus:outline-none btn flex text-center justify-center items-center ${classBtn}`}
             {...otherProps}
         >
-            {loading && <LoadingSpin w={20} />}
+            {loading && <LoadingSpin w={10} />}
             {children}
         </button>
     );

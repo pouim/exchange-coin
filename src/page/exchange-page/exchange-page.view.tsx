@@ -17,6 +17,7 @@ interface ExchangePageViewProps {
     onFromValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onToValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
     handleExchange: () => void;
+    isLoading: boolean;
 }
 
 const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
@@ -32,6 +33,7 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
         onFromValueChange,
         onToValueChange,
         handleExchange,
+        isLoading,
     } = props;
 
     return (
@@ -65,6 +67,8 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
                 <Button
                     onClick={handleExchange}
                     classBtn="p-2 w-full lg:w-28 mx-1 text-sm font-bold"
+                    disabled={isLoading}
+                    loading={isLoading}
                 >
                     Exchange
                 </Button>
