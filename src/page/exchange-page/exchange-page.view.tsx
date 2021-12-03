@@ -3,31 +3,35 @@ import styles from './style.module.css';
 import ExchangeBox from '../../components/ui/exchange-box';
 import Button from 'src/components/ui/button';
 import ConversionRateBox from 'src/components/ui/conversion-rate-box';
-import { Wallet } from 'src/interfaces';
+import { InputValueData, Wallet } from 'src/interfaces';
 
 interface ExchangePageViewProps {
+    userWallet: Wallet[];
     onChangeFromCoin: (coin: Wallet) => void;
     onChangeToCoin: (coin: Wallet) => void;
     fromCoin: Wallet;
     toCoin: Wallet;
     conversationRate: number;
-    fromValue: string;
-    toValue: string;
+    fromValueData: InputValueData;
+    toValueData: InputValueData;
     onFromValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onToValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    handleExchange: () => void;
 }
 
 const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
     const {
+        userWallet,
         onChangeFromCoin,
         onChangeToCoin,
         fromCoin,
         toCoin,
         conversationRate,
-        fromValue,
-        toValue,
+        fromValueData,
+        toValueData,
         onFromValueChange,
         onToValueChange,
+        handleExchange,
     } = props;
 
     return (
@@ -36,16 +40,18 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
                 <span className="text-xl">Exchange Now!</span>
                 <div className="bg-c-secondary-900  w-full lg:p-5 p-3 rounded-lg my-10">
                     <ExchangeBox
+                        userWallet={userWallet}
                         selectedCoin={fromCoin}
                         handleCoinChange={onChangeFromCoin}
-                        value={fromValue}
+                        valueData={fromValueData}
                         onValueChange={onFromValueChange}
                     />
                     <hr className="border-gray-600 my-2" />
                     <ExchangeBox
+                        userWallet={userWallet}
                         selectedCoin={toCoin}
                         handleCoinChange={onChangeToCoin}
-                        value={toValue}
+                        valueData={toValueData}
                         onValueChange={onToValueChange}
                     />
 
@@ -56,7 +62,12 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
                     />
                 </div>
 
-                <Button classBtn="p-2 w-full lg:w-28 mx-1 text-sm font-bold">Exchange</Button>
+                <Button
+                    onClick={handleExchange}
+                    classBtn="p-2 w-full lg:w-28 mx-1 text-sm font-bold"
+                >
+                    Exchange
+                </Button>
             </div>
         </>
     );

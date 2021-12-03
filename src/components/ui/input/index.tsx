@@ -7,7 +7,7 @@ interface InputProps
     placeholder?: string;
     labelClassName?: string;
     register?: any;
-    error?: ErrorInterface;
+    error?: ErrorInterface | null;
 }
 
 const Input: FC<InputProps> = ({ placeholder, labelClassName, register, error, ...oderProps }) => {

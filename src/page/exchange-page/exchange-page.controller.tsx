@@ -1,18 +1,25 @@
 import { ChangeEvent, memo, useState } from 'react';
+import Button from 'src/components/ui/button';
+import Modal from 'src/components/ui/modal';
 import { isEmpty } from 'src/helper';
 import { userWallet } from 'src/helper/mock';
-import { Wallet } from 'src/interfaces';
+import { InputValueData, Wallet } from 'src/interfaces';
+import { showError } from 'src/utils';
 import ExchangePageView from './exchange-page.view';
 
 // eslint-disable-next-line react/display-name
 const ExchangePageController = memo(() => {
-    const initialFromCoin = userWallet[0];
-    const initialToCoin = userWallet[1];
+    const initialValueData = {
+        value: '',
+        error: null,
+    } as InputValueData;
 
-    const [fromCoin, setFromCoin] = useState<Wallet>(initialFromCoin);
-    const [toCoin, setToCoin] = useState<Wallet>(initialToCoin);
-    const [fromValue, setFromValue] = useState<string>('');
-    const [toValue, setToValue] = useState<string>('');
+    const [wallet, setWallet] = useState<Wallet[]>(userWallet);
+    const [fromCoin, setFromCoin] = useState<Wallet>(wallet[0]);
+    const [toCoin, setToCoin] = useState<Wallet>(wallet[1]);
+    const [fromValueData, setFromValueData] = useState<InputValueData>(initialValueData);
+    const [toValueData, setToValueData] = useState<InputValueData>(initialValueData);
+    const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
     const [conversationRate, setConversationRate] = useState<number>(1.1877);
 
     /**
@@ -42,11 +49,17 @@ const ExchangePageController = memo(() => {
         const {
             target: { value },
         } = event;
-        setFromValue(value);
+        setFromValueData({
+            value,
+            error: null,
+        });
 
         !isEmpty(value)
-            ? setToValue((+value * conversationRate).toFixed(2).toString())
-            : setToValue('');
+            ? setToValueData({
+                  value: (+value * conversationRate).toFixed(2).toString(),
+                  error: null,
+              })
+            : setToValueData(initialValueData);
     };
 
     /**
@@ -58,24 +71,136 @@ const ExchangePageController = memo(() => {
         const {
             target: { value },
         } = event;
-        setToValue(value);
+        setToValueData({
+            value,
+            error: null,
+        });
         !isEmpty(value)
-            ? setFromValue((+value / conversationRate).toFixed(2).toString())
-            : setFromValue('');
+            ? setFromValueData({
+                  value: (+value / conversationRate).toFixed(2).toString(),
+                  error: null,
+              })
+            : setFromValueData(initialValueData);
+    };
+
+    /**
+     * @function handleExchange
+     * @returns { void }
+     */
+    const handleExchange = (): void => {
+        if (isEmpty(fromValueData.value) || isEmpty(toValueData.value)) {
+            setFromValueData((prev: InputValueData) => ({
+                ...prev,
+                error: { message: 'enter a value' },
+            }));
+            return;
+        }
+
+        if (+fromValueData?.value > fromCoin?.balance) {
+            showError({
+                error: 'more than your balance',
+                config: { color: 'red', gravity: 'top', position: 'center' },
+            });
+            return;
+        }
+
+        if (fromCoin.id === toCoin.id) {
+            setToValueData((prev: InputValueData) => ({
+                ...prev,
+                error: { message: 'select a different coin' },
+            }));
+            return;
+        }
+
+        setShowConfirmModal(true);
+    };
+
+    /**
+     * @function onCloseConfirmModal
+     * @returns { void }
+     */
+    const onCloseConfirmModal = (): void => {
+        setShowConfirmModal(false);
+    };
+
+    /**
+     * to update current coins
+     * @function updateCoins
+     * @returns { void }
+     */
+    const updateCoins = (): void => {
+        setFromCoin((prev) => ({ ...prev, balance: prev.balance - +fromValueData.value }));
+        setToCoin((prev) => ({ ...prev, balance: prev.balance + +toValueData.value }));
+    };
+
+    /**
+     * to update wallet
+     * @function updateWallet
+     * @returns { void }
+     */
+    const updateWallet = (): void => {
+        setWallet((prev: Wallet[]) => {
+            return prev.map((item: Wallet) =>
+                item.id === fromCoin.id
+                    ? { ...item, balance: item.balance - +fromValueData.value }
+                    : item.id === toCoin.id
+                    ? { ...item, balance: item.balance + +toValueData.value }
+                    : item,
+            );
+        });
+    };
+
+    /**
+     * @function handleConfirmExchange
+     * @returns { void }
+     */
+    const handleConfirmExchange = (): void => {
+        updateCoins();
+        updateWallet();
+
+        onCloseConfirmModal();
     };
 
     return (
-        <ExchangePageView
-            onChangeFromCoin={onChangeFromCoin}
-            onChangeToCoin={onChangeToCoin}
-            fromCoin={fromCoin}
-            toCoin={toCoin}
-            fromValue={fromValue}
-            toValue={toValue}
-            onFromValueChange={onFromValueChange}
-            onToValueChange={onToValueChange}
-            conversationRate={conversationRate}
-        />
+        <>
+            <Modal onClose={onCloseConfirmModal} visible={showConfirmModal}>
+                <div className="bg-white p-5 rounded-md text-gray-600">
+                    <span className="text-md p-0">
+                        you are going to exchange {fromCoin.sign} {fromValueData.value} to{' '}
+                        {toCoin.sign} {toValueData.value}
+                        <br />
+                        you will receive {toCoin.sign} {toValueData.value}
+                    </span>
+                    <div className="flex mt-5">
+                        <Button
+                            onClick={handleConfirmExchange}
+                            className="btn text-white m-1 bg-green-600"
+                        >
+                            Yes
+                        </Button>
+                        <Button
+                            onClick={onCloseConfirmModal}
+                            className="btn text-white m-1 bg-gray-500"
+                        >
+                            No
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+            <ExchangePageView
+                userWallet={wallet}
+                onChangeFromCoin={onChangeFromCoin}
+                onChangeToCoin={onChangeToCoin}
+                fromCoin={fromCoin}
+                toCoin={toCoin}
+                fromValueData={fromValueData}
+                toValueData={toValueData}
+                onFromValueChange={onFromValueChange}
+                onToValueChange={onToValueChange}
+                handleExchange={handleExchange}
+                conversationRate={conversationRate}
+            />
+        </>
     );
 });
 

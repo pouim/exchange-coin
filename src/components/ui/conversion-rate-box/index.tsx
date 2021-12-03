@@ -13,7 +13,7 @@ const ConversionRateBox: FC<ConversionRateBoxProps> = (props): ReactElement => {
     return (
         <div className="text-center mt-10 px-4 py-2 bg-lighten-5 w-auto mx-auto rounded-3xl">
             {' '}
-            1 {fromCoin?.sign} = {conversationRate} {toCoin.sign}
+            {fromCoin?.sign} 1 = {toCoin.sign} {conversationRate}
         </div>
     );
 };
