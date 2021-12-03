@@ -18,6 +18,7 @@ interface ComboBoxProps
     data: any[];
     onSelectedItem: (item: any) => any;
     renderItem: (item: any, index: number) => ReactElement;
+    value?: string;
 }
 let key = 0;
 const ComboBox: FC<ComboBoxProps> = ({
@@ -32,28 +33,10 @@ const ComboBox: FC<ComboBoxProps> = ({
     error,
     renderItem,
     color,
+    value,
     ...otherProps
 }) => {
-    const [filteredData, setFilteredData] = useState(data ?? []);
-
-    const [_value, setValue] = useState<string>(otherProps.defaultValue as string);
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e?.target?.value ?? e;
-        setValue(value.toUpperCase());
-    };
-    useEffect(() => {
-        setValue(otherProps.defaultValue as string);
-    }, [otherProps.defaultValue]);
     const [open, setOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        const _data = data?.filter((item) => item?.includes(_value));
-        setFilteredData(_data);
-    }, [_value]);
-
-    useEffect(() => {
-        setFilteredData(data);
-    }, [data]);
 
     return (
         <div className={`relative ${wrapperClassName}`} onClick={() => setOpen(!open)}>
@@ -61,7 +44,6 @@ const ComboBox: FC<ComboBoxProps> = ({
                 disabled={isLoading || !data?.length}
                 ref={register}
                 autoComplete="off"
-                onFocus={() => setOpen(true)}
                 id={otherProps.name}
                 className={cn(
                     styles.input,
@@ -73,8 +55,7 @@ const ComboBox: FC<ComboBoxProps> = ({
                 )}
                 {...otherProps}
                 pattern=".+"
-                value={_value}
-                onChange={onChange}
+                value={value}
                 required
             />
 
@@ -111,12 +92,11 @@ const ComboBox: FC<ComboBoxProps> = ({
                 onClose={() => setOpen(false)}
             >
                 <div className="overflow-y-scroll bg-main max-h-72 text-sm custom_scrollbar">
-                    {filteredData?.map((item, index) => {
+                    {data?.map((item, index) => {
                         key++;
                         return (
                             <div
                                 onClick={() => {
-                                    setValue(item);
                                     onSelectedItem(item);
                                     setOpen(false);
                                 }}

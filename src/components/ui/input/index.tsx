@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 import { ErrorInterface } from 'src/interfaces';
 import styles from './style.module.css';
 

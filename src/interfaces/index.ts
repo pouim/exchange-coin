@@ -7,3 +7,10 @@ export interface LayoutProps {
 export interface ErrorInterface {
     message: string;
 }
+
+export interface Wallet {
+    id: string;
+    title: string;
+    balance: number;
+    sign: string;
+}
