@@ -11,7 +11,7 @@ interface ExchangePageViewProps {
     onChangeToCoin: (coin: Wallet) => void;
     fromCoin: Wallet;
     toCoin: Wallet;
-    conversationRate: number;
+    conversionRate: number;
     fromValueData: InputValueData;
     toValueData: InputValueData;
     onFromValueChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -27,7 +27,7 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
         onChangeToCoin,
         fromCoin,
         toCoin,
-        conversationRate,
+        conversionRate,
         fromValueData,
         toValueData,
         onFromValueChange,
@@ -60,7 +60,7 @@ const ExchangePageView: FC<ExchangePageViewProps> = (props): ReactElement => {
                     <ConversionRateBox
                         fromCoin={fromCoin}
                         toCoin={toCoin}
-                        conversationRate={conversationRate}
+                        conversionRate={conversionRate}
                     />
                 </div>
 

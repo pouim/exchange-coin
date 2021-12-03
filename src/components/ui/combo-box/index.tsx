@@ -67,14 +67,17 @@ const ComboBox: FC<ComboBoxProps> = ({
             </label>
 
             {error && (
-                <div className="text-xs px-4 h-5 flex items-center overflow-hidden text-right text-red-600">
+                <div
+                    className="text-xs px-4 h-5 flex items-center overflow-hidden text-right text-red-600"
+                    data-test="combo-box-error"
+                >
                     {error}
                 </div>
             )}
 
             <div className="absolute mr-2 right-0 top-2 z-40 flex justify-center items-center w-5 h-5 cursor-pointer">
                 {isLoading ? (
-                    <LoadingSpin />
+                    <LoadingSpin data-test="combo-box-loading" />
                 ) : (
                     <div
                         onClick={() => setOpen(!open)}
@@ -82,6 +85,7 @@ const ComboBox: FC<ComboBoxProps> = ({
                             'w-2 h-2  border-b transition-all  cursor-pointer duration-300 border-r transform  border-gray-400',
                             open ? 'rotate-224' : 'rotate-45',
                         )}
+                        data-test="combo-box-arrow-button"
                     />
                 )}
             </div>
@@ -90,6 +94,7 @@ const ComboBox: FC<ComboBoxProps> = ({
                 heightClassName="w-40 top-10 rounded-md"
                 visible={open}
                 onClose={() => setOpen(false)}
+                data-test="combo-box-drop-list"
             >
                 <div className="overflow-y-scroll bg-main max-h-72 text-sm custom_scrollbar">
                     {data?.map((item, index) => {

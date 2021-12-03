@@ -23,7 +23,7 @@ const ExchangePageController = memo(() => {
     const [fromValueData, setFromValueData] = useState<InputValueData>(initialValueData);
     const [toValueData, setToValueData] = useState<InputValueData>(initialValueData);
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
-    const [conversationRate, setConversationRate] = useState<number>(1.1877);
+    const [conversionRate, setConversionRate] = useState<number>(1.1877);
 
     const { mutate: getRate, data, isLoading } = useMutation(gate.getConversionRate);
 
@@ -36,10 +36,10 @@ const ExchangePageController = memo(() => {
         const query = `latest?access_key=${access_key}&base=${fromCoin.id}&symbols=${toCoin.id}`;
         getRate(query, {
             onSuccess: (data: any) => {
-                setConversationRate(Object.values(data.rates)[0] as number);
+                setConversionRate(Object.values(data.rates)[0] as number);
             },
             onError: (error: any) => {
-                setConversationRate(1.1877);
+                setConversionRate(1.1877);
             },
         });
     };
@@ -78,7 +78,7 @@ const ExchangePageController = memo(() => {
 
         !isEmpty(value)
             ? setToValueData({
-                  value: (+value * conversationRate).toFixed(2).toString(),
+                  value: (+value * conversionRate).toFixed(2).toString(),
                   error: null,
               })
             : setToValueData(initialValueData);
@@ -99,7 +99,7 @@ const ExchangePageController = memo(() => {
         });
         !isEmpty(value)
             ? setFromValueData({
-                  value: (+value / conversationRate).toFixed(2).toString(),
+                  value: (+value / conversionRate).toFixed(2).toString(),
                   error: null,
               })
             : setFromValueData(initialValueData);
@@ -224,7 +224,7 @@ const ExchangePageController = memo(() => {
                 onFromValueChange={onFromValueChange}
                 onToValueChange={onToValueChange}
                 handleExchange={handleExchange}
-                conversationRate={conversationRate}
+                conversionRate={conversionRate}
                 isLoading={isLoading}
             />
         </>
